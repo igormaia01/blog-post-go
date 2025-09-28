@@ -5,6 +5,7 @@ date: '2025-09-24'
 tags: ['pessoal', 'blog', 'cache', 'estratégias']
 excerpt: 'Uma visão geral das estratégias de evicção de cache e suas implicações.'
 slug: 'estrategias-eviccao-cache'
+status: 'published'
 ---
 
 # Estratégias de Evicção de Cache

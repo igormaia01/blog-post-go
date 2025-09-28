@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Tags - {{ .SiteTitle }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .tags-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        .tag-item {
+            display: inline-block;
+            background: #f0f0f0;
+            color: #333;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 0.9em;
+        }
+        .tag-item:hover {
+            background: #007acc;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .no-tags {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ .SiteTitle }}</h1>
+        <p>All Tags</p>
+    </div>
+
+    <div class="tags-container">
+        {{ if .Tags }}
+            <div class="tag-cloud">
+                {{ range .Tags }}
+                <a href="/tag/{{ . }}" class="tag-item">{{ . }}</a>
+                {{ end }}
+            </div>
+        {{ else }}
+            <div class="no-tags">
+                <h3>No tags available</h3>
+                <p>Tags will appear here as posts are published.</p>
+            </div>
+        {{ end }}
+    </div>
+</body>
+</html>

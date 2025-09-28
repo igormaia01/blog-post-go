@@ -5,6 +5,7 @@ date: '2025-09-23'
 tags: ['pessoal', 'blog', 'primeiro-post']
 excerpt: 'Este é meu primeiro post no blog pessoal usando Markdown.'
 slug: 'meu-primeiro-post'
+status: 'published'
 ---
 
 # Bem-vindo ao meu blog!
