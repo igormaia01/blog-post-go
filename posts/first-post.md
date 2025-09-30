@@ -1,6 +1,6 @@
 ---
 title: 'Meu Primeiro Post'
-author: 'Igor'
+author: 'Blog Author'
 date: '2025-09-23'
 tags: ['pessoal', 'blog', 'primeiro-post']
 excerpt: 'Este é meu primeiro post no blog pessoal usando Markdown.'

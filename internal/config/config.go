@@ -141,9 +141,9 @@ func Load() *Config {
 			TTL:      getDurationEnv("CACHE_TTL", 1*time.Hour),
 		},
 		Blog: BlogConfig{
-			Title:        getEnv("BLOG_TITLE", "Igor's Blog"),
+			Title:        getEnv("BLOG_TITLE", "My Blog"),
 			Description:  getEnv("BLOG_DESCRIPTION", "A personal blog about programming, technology, and life"),
-			Author:       getEnv("BLOG_AUTHOR", "Igor"),
+			Author:       getEnv("BLOG_AUTHOR", "Blog Author"),
 			URL:          getEnv("BLOG_URL", "http://localhost:3100"),
 			PostsPerPage: getIntEnv("BLOG_POSTS_PER_PAGE", 10),
 			Theme:        getEnv("BLOG_THEME", "default"),

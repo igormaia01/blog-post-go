@@ -1,6 +1,6 @@
 ---
 title: 'Estratégias de Evicção de Cache'
-author: 'Igor'
+author: 'Blog Author'
 date: '2025-09-24'
 tags: ['pessoal', 'blog', 'cache', 'estratégias']
 excerpt: 'Uma visão geral das estratégias de evicção de cache e suas implicações.'

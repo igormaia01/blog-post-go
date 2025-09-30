@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Setting up Igor's Blog..."
+echo "🚀 Setting up Blog..."
 echo ""
 
 # Check if configs/.env exists

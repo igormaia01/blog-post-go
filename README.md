@@ -44,12 +44,31 @@ blog/
 
 2. **Configure Environment**
 
-   Edit `configs/app.env` to set your admin credentials:
+   Copy the example environment file and customize it:
+
+   ```bash
+   cp configs/.env.example configs/app.env
+   ```
+
+   Edit `configs/app.env` to set your blog and admin configuration:
 
    ```env
+   # Blog Configuration - Customize these values
+   BLOG_TITLE=My Blog
+   BLOG_AUTHOR=Your Name
+   BLOG_DESCRIPTION=Your blog description
+   BLOG_URL=http://localhost:3100
+
+   # Admin Configuration - IMPORTANT: Change these!
    ADMIN_USERNAME=admin
    ADMIN_PASSWORD=your_secure_password
    ADMIN_SECRET=your-secret-key-change-this-in-production
+   ```
+
+   Generate a secure admin secret:
+
+   ```bash
+   openssl rand -base64 32
    ```
 
 3. **Run the Application**
@@ -70,17 +89,20 @@ Create new posts in the `posts/` directory using Markdown format with frontmatte
 ```markdown
 ---
 title: 'My Blog Post'
-author: 'Igor'
+author: 'Blog Author' # You can use the BLOG_AUTHOR from your .env or specify per post
 date: '2025-01-15'
 tags: ['go', 'programming', 'blog']
 excerpt: 'This is a sample blog post.'
 slug: 'my-blog-post'
+status: 'published' # or 'draft'
 ---
 
 # My Blog Post
 
 Write your content here in Markdown...
 ```
+
+The `author` field in each post can be customized per post, or you can use the default author name set in your environment configuration (`BLOG_AUTHOR`).
 
 ## Admin Panel
 

@@ -52,6 +52,15 @@ func main() {
 
 	// Middleware
 	router.Use(middleware.LoggingMiddleware())
+	
+	// Add blog config to context middleware
+	router.Use(func(c *gin.Context) {
+		c.Set("BlogTitle", cfg.Blog.Title)
+		c.Set("BlogDescription", cfg.Blog.Description)
+		c.Set("BlogAuthor", cfg.Blog.Author)
+		c.Set("BlogURL", cfg.Blog.URL)
+		c.Next()
+	})
 
 	// Load HTML templates
 	router.LoadHTMLFiles(

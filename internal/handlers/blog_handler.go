@@ -38,9 +38,13 @@ func (bh *BlogHandler) PostsList(c *gin.Context) {
 		return
 	}
 
+	// Get blog config from context or environment
+	blogTitle := c.GetString("BlogTitle")
+	blogDescription := c.GetString("BlogDescription")
+
 	c.HTML(http.StatusOK, "list.tmpl", gin.H{
-		"SiteTitle":       "Igor's Blog",
-		"SiteDescription": "A personal blog about programming, technology, and life",
+		"SiteTitle":       blogTitle,
+		"SiteDescription": blogDescription,
 		"Posts":           posts,
 	})
 }
@@ -70,8 +74,11 @@ func (bh *BlogHandler) PostDetail(c *gin.Context) {
 	// Get related posts
 	relatedPosts, _ := bh.postService.GetRelatedPosts(post, 3)
 
+	// Get blog config from context
+	blogTitle := c.GetString("BlogTitle")
+
 	c.HTML(http.StatusOK, "detail.tmpl", gin.H{
-		"SiteTitle":    "Igor's Blog",
+		"SiteTitle":    blogTitle,
 		"Post":         post,
 		"RelatedPosts": relatedPosts,
 	})
@@ -95,8 +102,11 @@ func (bh *BlogHandler) PostBySlug(c *gin.Context) {
 	// Get related posts
 	relatedPosts, _ := bh.postService.GetRelatedPosts(post, 3)
 
+	// Get blog config from context
+	blogTitle := c.GetString("BlogTitle")
+
 	c.HTML(http.StatusOK, "detail.tmpl", gin.H{
-		"SiteTitle":    "Igor's Blog",
+		"SiteTitle":    blogTitle,
 		"Post":         post,
 		"RelatedPosts": relatedPosts,
 	})
@@ -175,10 +185,14 @@ func (bh *BlogHandler) RSSFeed(c *gin.Context) {
 		posts = posts[:20]
 	}
 
+	// Get blog config from context
+	blogTitle := c.GetString("BlogTitle")
+	blogURL := c.GetString("BlogURL")
+
 	c.Header("Content-Type", "application/rss+xml")
 	c.HTML(http.StatusOK, "rss.tmpl", gin.H{
-		"SiteTitle": "Igor's Blog",
-		"SiteURL":   "http://localhost:3100",
+		"SiteTitle": blogTitle,
+		"SiteURL":   blogURL,
 		"Posts":     posts,
 	})
 }
@@ -191,9 +205,12 @@ func (bh *BlogHandler) Sitemap(c *gin.Context) {
 		return
 	}
 
+	// Get blog config from context
+	blogURL := c.GetString("BlogURL")
+
 	c.Header("Content-Type", "application/xml")
 	c.HTML(http.StatusOK, "sitemap.tmpl", gin.H{
-		"SiteURL": "http://localhost:3100",
+		"SiteURL": blogURL,
 		"Posts":   posts,
 	})
 }
