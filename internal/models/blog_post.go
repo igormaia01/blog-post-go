@@ -104,6 +104,33 @@ type Comment struct {
 // CommentStatus represents the moderation status of a comment
 type CommentStatus string
 
+
+// PostMetrics represents metrics for a blog post
+type PostMetrics struct {
+    PostID          int       `json:"post_id" db:"post_id"`
+    ViewCount       int       `json:"view_count" db:"view_count"`
+    ShareCount      int       `json:"share_count" db:"share_count"`
+    FacebookShares  int       `json:"facebook_shares" db:"facebook_shares"`
+    TwitterShares   int       `json:"twitter_shares" db:"twitter_shares"`
+    LinkedInShares  int       `json:"linkedin_shares" db:"linkedin_shares"`
+    LastViewedAt    time.Time `json:"last_viewed_at" db:"last_viewed_at"`
+    LastSharedAt    time.Time `json:"last_shared_at" db:"last_shared_at"`
+}
+
+// DashboardStats represents statistics for the admin dashboard
+type DashboardStats struct {
+    TotalPosts      int
+    PublishedPosts  int
+    DraftPosts      int
+    ArchivedPosts   int
+    TotalViews      int
+    TotalShares     int
+    TodayViews      int
+    TodayShares     int
+    PopularPosts    []BlogPost
+    RecentPosts     []BlogPost
+}
+
 const (
 	CommentPending   CommentStatus = "pending"
 	CommentApproved  CommentStatus = "approved"

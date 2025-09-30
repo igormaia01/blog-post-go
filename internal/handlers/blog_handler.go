@@ -11,13 +11,15 @@ import (
 
 // BlogHandler handles blog-related HTTP requests
 type BlogHandler struct {
-	postService *services.PostService
+	postService    *services.PostService
+	metricsService *services.MetricsService
 }
 
 // NewBlogHandler creates a new BlogHandler instance
-func NewBlogHandler(postService *services.PostService) *BlogHandler {
+func NewBlogHandler(postService *services.PostService, metricsService *services.MetricsService) *BlogHandler {
 	return &BlogHandler{
-		postService: postService,
+		postService:    postService,
+		metricsService: metricsService,
 	}
 }
 
@@ -63,7 +65,7 @@ func (bh *BlogHandler) PostDetail(c *gin.Context) {
 	}
 
 	// Increment view count
-	bh.postService.IncrementViewCount(post.ID)
+	bh.metricsService.IncrementViewCount(post.ID)
 
 	// Get related posts
 	relatedPosts, _ := bh.postService.GetRelatedPosts(post, 3)
@@ -88,7 +90,7 @@ func (bh *BlogHandler) PostBySlug(c *gin.Context) {
 	}
 
 	// Increment view count
-	bh.postService.IncrementViewCount(post.ID)
+	bh.metricsService.IncrementViewCount(post.ID)
 
 	// Get related posts
 	relatedPosts, _ := bh.postService.GetRelatedPosts(post, 3)
@@ -194,4 +196,25 @@ func (bh *BlogHandler) Sitemap(c *gin.Context) {
 		"SiteURL": "http://localhost:3100",
 		"Posts":   posts,
 	})
+}
+
+// TrackShare handles share tracking
+func (bh *BlogHandler) TrackShare(c *gin.Context) {
+	var request struct {
+		PostID   int    `json:"post_id" binding:"required"`
+		Platform string `json:"platform" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := bh.metricsService.IncrementShareCount(request.PostID, request.Platform)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to track share"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true})
 }

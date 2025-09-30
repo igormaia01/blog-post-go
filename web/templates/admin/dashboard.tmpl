@@ -133,6 +133,25 @@
         .btn-secondary:hover {
             background: #545b62;
         }
+        .metrics-card {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .metrics-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        .metrics-label {
+            color: #666;
+        }
+        .metrics-value {
+            font-weight: bold;
+            color: #007acc;
+        }
     </style>
 </head>
 <body>
@@ -151,6 +170,10 @@
 
         <div class="stats-grid">
             <div class="stat-card">
+                <div class="stat-number">{{ .Stats.TotalPosts }}</div>
+                <div class="stat-label">Total Posts</div>
+            </div>
+            <div class="stat-card">
                 <div class="stat-number">{{ .Published }}</div>
                 <div class="stat-label">Published Posts</div>
             </div>
@@ -159,28 +182,58 @@
                 <div class="stat-label">Draft Posts</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">{{ .Archived }}</div>
-                <div class="stat-label">Archived Posts</div>
+                <div class="stat-number">{{ .TotalViews }}</div>
+                <div class="stat-label">Total Views</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">{{ len .Posts }}</div>
-                <div class="stat-label">Total Posts</div>
+                <div class="stat-number">{{ .TotalShares }}</div>
+                <div class="stat-label">Total Shares</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ .TodayViews }}</div>
+                <div class="stat-label">Today's Views</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ .TodayShares }}</div>
+                <div class="stat-label">Today's Shares</div>
             </div>
         </div>
 
         <div class="recent-posts">
-            <h2>Recent Posts</h2>
+            <h2>Recent Posts with Metrics</h2>
             {{ if .Posts }}
                 {{ range .Posts }}
                 <div class="post-item">
-                    <div>
-                        <a href="/admin/posts/{{ .ID }}/edit" class="post-title">{{ .Title }}</a>
+                    <div style="flex: 1;">
+                        <a href="/admin/posts/{{ .Post.ID }}/edit" class="post-title">{{ .Post.Title }}</a>
                         <div class="post-meta">
-                            {{ .Date.Format "January 2, 2006" }} | {{ .Author }}
+                            {{ .Post.Date.Format "January 2, 2006" }} | {{ .Post.Author }}
+                        </div>
+                        <div class="metrics-card">
+                            <div class="metrics-row">
+                                <span class="metrics-label">👁️ Views:</span>
+                                <span class="metrics-value">{{ .Metrics.ViewCount }}</span>
+                            </div>
+                            <div class="metrics-row">
+                                <span class="metrics-label">📤 Total Shares:</span>
+                                <span class="metrics-value">{{ .Metrics.ShareCount }}</span>
+                            </div>
+                            <div class="metrics-row">
+                                <span class="metrics-label">Facebook:</span>
+                                <span class="metrics-value">{{ .Metrics.FacebookShares }}</span>
+                            </div>
+                            <div class="metrics-row">
+                                <span class="metrics-label">Twitter:</span>
+                                <span class="metrics-value">{{ .Metrics.TwitterShares }}</span>
+                            </div>
+                            <div class="metrics-row">
+                                <span class="metrics-label">LinkedIn:</span>
+                                <span class="metrics-value">{{ .Metrics.LinkedInShares }}</span>
+                            </div>
                         </div>
                     </div>
                     <div>
-                        <span class="status-badge status-{{ .Status }}">{{ .Status }}</span>
+                        <span class="status-badge status-{{ .Post.Status }}">{{ .Post.Status }}</span>
                     </div>
                 </div>
                 {{ end }}

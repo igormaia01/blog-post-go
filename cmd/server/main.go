@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"blog-post/internal/config"
 	"blog-post/internal/handlers"
@@ -18,17 +19,27 @@ func main() {
 	// Initialize services
 	cache := services.NewMemoryCache()
 	postService := services.NewPostService("posts", cache)
+	metricsService := services.NewMetricsService()
+	authService := services.NewAuthService(cfg.Admin.Username, cfg.Admin.Password)
+
+	// Start session cleanup routine
+	go func() {
+		ticker := time.NewTicker(1 * time.Hour)
+		defer ticker.Stop()
+		for range ticker.C {
+			authService.CleanupExpiredSessions()
+		}
+	}()
 
 	// Initialize handlers
-	blogHandler := handlers.NewBlogHandler(postService)
-	adminHandler := handlers.NewAdminHandler(postService)
+	blogHandler := handlers.NewBlogHandler(postService, metricsService)
+	adminHandler := handlers.NewAdminHandler(postService, metricsService, authService)
 
 	// Setup Gin router
 	router := gin.Default()
 
 	// Middleware
 	router.Use(middleware.LoggingMiddleware())
-	// router.Use(middleware.AuthMiddleware())
 
 	// Load HTML templates
 	router.LoadHTMLFiles(
@@ -57,11 +68,20 @@ func main() {
 	router.GET("/rss.xml", blogHandler.RSSFeed)
 	router.GET("/sitemap.xml", blogHandler.Sitemap)
 
-	// Admin routes
-	admin := router.Group("/admin")
+	// API routes
+	api := router.Group("/api")
 	{
-		admin.GET("/login", adminHandler.Login)
-		admin.POST("/login", adminHandler.LoginPost)
+		api.POST("/track-share", blogHandler.TrackShare)
+	}
+
+	// Admin routes (public)
+	router.GET("/admin/login", adminHandler.Login)
+	router.POST("/admin/login", adminHandler.LoginPost)
+
+	// Admin routes (protected)
+	admin := router.Group("/admin")
+	admin.Use(middleware.AuthMiddleware(authService))
+	{
 		admin.GET("/logout", adminHandler.Logout)
 		admin.GET("/", adminHandler.Dashboard)
 		admin.GET("/posts", adminHandler.PostsList)

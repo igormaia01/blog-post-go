@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"blog-post/internal/models"
 	"blog-post/internal/services"
 
 	"github.com/gin-gonic/gin"
@@ -11,13 +12,17 @@ import (
 
 // AdminHandler handles admin panel requests
 type AdminHandler struct {
-	postService *services.PostService
+	postService    *services.PostService
+	metricsService *services.MetricsService
+	authService    *services.AuthService
 }
 
 // NewAdminHandler creates a new AdminHandler instance
-func NewAdminHandler(postService *services.PostService) *AdminHandler {
+func NewAdminHandler(postService *services.PostService, metricsService *services.MetricsService, authService *services.AuthService) *AdminHandler {
 	return &AdminHandler{
-		postService: postService,
+		postService:    postService,
+		metricsService: metricsService,
+		authService:    authService,
 	}
 }
 
@@ -31,25 +36,55 @@ func (ah *AdminHandler) Dashboard(c *gin.Context) {
 		return
 	}
 
+	// Get metrics for all posts
+	allMetrics := ah.metricsService.GetAllMetrics()
+
+	// Enrich posts with metrics
+	postsWithMetrics := make([]gin.H, 0)
+	for _, post := range posts {
+		metrics, _ := ah.metricsService.GetMetrics(post.ID)
+		postsWithMetrics = append(postsWithMetrics, gin.H{
+			"Post":    post,
+			"Metrics": metrics,
+		})
+	}
+
 	// Count posts by status
 	var published, drafts, archived int
 	for _, post := range posts {
 		switch post.Status {
-		case "published":
+		case models.StatusPublished:
 			published++
-		case "draft":
+		case models.StatusDraft:
 			drafts++
-		case "archived":
+		case models.StatusArchived:
 			archived++
 		}
 	}
 
+	stats := models.DashboardStats{
+		TotalPosts:     len(posts),
+		PublishedPosts: published,
+		DraftPosts:     drafts,
+		ArchivedPosts:  archived,
+		TotalViews:     ah.metricsService.GetTotalViews(),
+		TotalShares:    ah.metricsService.GetTotalShares(),
+		TodayViews:     ah.metricsService.GetTodayViews(),
+		TodayShares:    ah.metricsService.GetTodayShares(),
+	}
+
 	c.HTML(http.StatusOK, "dashboard.tmpl", gin.H{
-		"Title":     "Admin Dashboard",
-		"Posts":     posts,
-		"Published": published,
-		"Drafts":    drafts,
-		"Archived":  archived,
+		"Title":       "Admin Dashboard",
+		"Posts":       postsWithMetrics,
+		"Stats":       stats,
+		"Published":   published,
+		"Drafts":      drafts,
+		"Archived":    archived,
+		"TotalViews":  stats.TotalViews,
+		"TotalShares": stats.TotalShares,
+		"TodayViews":  stats.TodayViews,
+		"TodayShares": stats.TodayShares,
+		"AllMetrics":  allMetrics,
 	})
 }
 
@@ -159,20 +194,23 @@ func (ah *AdminHandler) LoginPost(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 
-	// Simple authentication (in production, use proper auth)
-	if username == "admin" && password == "admin123" {
-		c.SetCookie("admin_session", "authenticated", 3600, "/", "", false, true)
-		c.Redirect(http.StatusFound, "/admin")
-	} else {
-		c.HTML(http.StatusOK, "login.tmpl", gin.H{
+	token, err := ah.authService.Login(username, password)
+	if err != nil {
+		c.HTML(http.StatusUnauthorized, "login.tmpl", gin.H{
 			"Title": "Admin Login",
-			"Error": "Invalid credentials",
+			"Error": "Invalid credentials. Please try again.",
 		})
+		return
 	}
+
+	c.SetCookie("admin_session", token, 86400, "/", "", false, true)
+	c.Redirect(http.StatusFound, "/admin")
 }
 
 // Logout handles logout
 func (ah *AdminHandler) Logout(c *gin.Context) {
+	token, _ := c.Cookie("admin_session")
+	ah.authService.Logout(token)
 	c.SetCookie("admin_session", "", -1, "/", "", false, true)
-	c.Redirect(http.StatusFound, "/login")
+	c.Redirect(http.StatusFound, "/admin/login")
 }

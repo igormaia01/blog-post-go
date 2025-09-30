@@ -157,9 +157,10 @@
             <p>Thank you for reading!</p>
             
             <div class="share-buttons">
-                <a href="#" class="share-button" onclick="sharePost('twitter')">Share on Twitter</a>
-                <a href="#" class="share-button" onclick="sharePost('facebook')">Share on Facebook</a>
-                <a href="#" class="share-button" onclick="copyLink()">Copy Link</a>
+                <a href="#" class="share-button" onclick="sharePost('twitter'); return false;">Share on Twitter</a>
+                <a href="#" class="share-button" onclick="sharePost('facebook'); return false;">Share on Facebook</a>
+                <a href="#" class="share-button" onclick="sharePost('linkedin'); return false;">Share on LinkedIn</a>
+                <a href="#" class="share-button" onclick="copyLink(); return false;">Copy Link</a>
             </div>
 
             {{ if .RelatedPosts }}
@@ -178,16 +179,34 @@
             const title = encodeURIComponent('{{ .Post.Title }}');
             const url = encodeURIComponent(window.location.href);
             
+            // Track the share
+            fetch('/api/track-share', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    post_id: {{ .Post.ID }},
+                    platform: platform
+                })
+            }).catch(err => console.error('Failed to track share:', err));
+            
+            // Open share dialog
             if (platform === 'twitter') {
                 window.open(`https://twitter.com/intent/tweet?text=${title}&url=${url}`, '_blank');
             } else if (platform === 'facebook') {
                 window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+            } else if (platform === 'linkedin') {
+                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
             }
         }
         
         function copyLink() {
             navigator.clipboard.writeText(window.location.href).then(() => {
                 alert('Link copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy link:', err);
+                alert('Failed to copy link');
             });
         }
     </script>
