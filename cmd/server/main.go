@@ -82,16 +82,7 @@ func main() {
 	admin := router.Group("/admin")
 	admin.Use(middleware.AuthMiddleware(authService))
 	{
-		admin.GET("/logout", adminHandler.Logout)
 		admin.GET("/", adminHandler.Dashboard)
-		admin.GET("/posts", adminHandler.PostsList)
-		admin.GET("/posts/new", adminHandler.PostEdit)
-		admin.GET("/posts/:id/edit", adminHandler.PostEdit)
-		admin.POST("/posts", adminHandler.PostSave)
-		admin.POST("/posts/:id", adminHandler.PostSave)
-		admin.DELETE("/posts/:id", adminHandler.PostDelete)
-		admin.GET("/tags", adminHandler.TagsList)
-		admin.GET("/settings", adminHandler.Settings)
 	}
 
 	// Start server
