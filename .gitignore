@@ -4,6 +4,7 @@ main
 # Environment files
 .env
 configs/.env
+configs/app.env
 *.env
 
 # But allow .env.example

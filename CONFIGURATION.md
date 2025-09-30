@@ -14,11 +14,6 @@ This document explains how to configure your blog using environment variables.
    nano configs/app.env  # or use your preferred editor
    ```
 
-3. **Generate a secure admin secret:**
-   ```bash
-   openssl rand -base64 32
-   ```
-
 ## Required Configuration
 
 ### Blog Identity
@@ -49,9 +44,6 @@ ADMIN_USERNAME=admin
 
 # Admin password - use a strong password!
 ADMIN_PASSWORD=change-this-to-a-strong-password
-
-# Secret key for session tokens - use output from: openssl rand -base64 32
-ADMIN_SECRET=your-generated-secret-key-here
 ```
 
 ## How Blog Information is Used
@@ -122,19 +114,15 @@ Before deploying to production:
 - [ ] Change `BLOG_AUTHOR` to your name
 - [ ] Update `BLOG_URL` to your production domain
 - [ ] Set a strong `ADMIN_PASSWORD`
-- [ ] Generate and set a random `ADMIN_SECRET`
 - [ ] Update `ADMIN_USERNAME` to something other than "admin"
-- [ ] Review and adjust other settings as needed
+- [ ] Set `LOG_LEVEL` to "info" or "warn" for production
 
 ## Additional Configuration
 
 See `configs/.env.example` for all available configuration options including:
 
-- Server settings (host, port, timeouts)
-- Cache configuration
+- Server settings (host, port)
 - Logging options
-- Feature flags
-- Database settings (for future use)
 
 ## Getting Help
 

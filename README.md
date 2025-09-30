@@ -31,7 +31,9 @@ blog/
 │   └── templates/      # HTML templates
 ├── posts/              # Markdown blog posts
 ├── configs/            # Configuration files
-└── docs/               # Documentation
+├── images/             # Blog post images
+├── scripts/            # Setup and utility scripts
+└── tests/              # Test scripts
 ```
 
 ## Quick Start
@@ -62,13 +64,6 @@ blog/
    # Admin Configuration - IMPORTANT: Change these!
    ADMIN_USERNAME=admin
    ADMIN_PASSWORD=your_secure_password
-   ADMIN_SECRET=your-secret-key-change-this-in-production
-   ```
-
-   Generate a secure admin secret:
-
-   ```bash
-   openssl rand -base64 32
    ```
 
 3. **Run the Application**
