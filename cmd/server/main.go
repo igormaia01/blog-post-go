@@ -16,6 +16,18 @@ func main() {
 	// Load configuration
 	cfg := config.Load()
 
+	// Validate configuration
+	if err := cfg.Validate(); err != nil {
+		log.Fatalf("Invalid configuration: %v", err)
+	}
+
+	// Set Gin mode based on environment
+	if cfg.Logging.Level == "debug" {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	// Initialize services
 	cache := services.NewMemoryCache()
 	postService := services.NewPostService("posts", cache)
@@ -87,5 +99,6 @@ func main() {
 
 	// Start server
 	log.Printf("Starting server on %s:%s", cfg.Server.Host, cfg.Server.Port)
+	log.Printf("Admin panel: http://%s:%s/admin/login", cfg.Server.Host, cfg.Server.Port)
 	log.Fatal(router.Run(cfg.Server.Host + ":" + cfg.Server.Port))
 }

@@ -1,1 +1,11 @@
 server.log
+main
+
+# Environment files
+.env
+configs/.env
+*.env
+
+# But allow .env.example
+!.env.example
+!configs/.env.example
